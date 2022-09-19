@@ -23,6 +23,7 @@ def get_ip_attributes(ip: str, mask: str) -> str:
             maxNodesCount = 2 ** (32 - i * 8 - str(bin(int(listMask[i]))).count('1')) - 2
         else:
             listNet[i] = int(listIp[i]) & int(listMask[i])
+            listNode[i] = int(listIp[i]) & int(listMask[i])
         listNodeRes += str(listNode[i])
         listBroadRes += str(listBroad[i])
         listNetRes += str(listNet[i])
@@ -64,9 +65,11 @@ def same_network(ip1: str, m1: str, ip2: str, m2: str) -> str:
 def get_min_mask(node1: str, node2: str) -> str:
     listNode1 = node1.split(".")
     listNode2 = node2.split(".")
-    maskRes = ""
+    listMinMask = ["255", "255", "255", "255"]
+    resultMask = ""
     okDec = 0
-    for i in range(4):
+    i = 3
+    while i != -1:
         if listNode1[i] != listNode2[i]:
             ok1 = bytearray(listNode1[i], 'utf-8')
             ok2 = bytearray(listNode2[i], 'utf-8')
@@ -74,16 +77,15 @@ def get_min_mask(node1: str, node2: str) -> str:
             while ok1[j] == ok2[j]:
                 j += 1
                 okDec += 2 ** (8 - j)
-            maskRes += str(okDec)
-            if i != 3:
-                maskRes += "."
-        else:
-            if okDec == 0:
-                maskRes += "255"
-            else:
-                maskRes += "0"
-            if i != 3:
-                maskRes += "."
-    return "Минимальная маска: " + maskRes
+            listMinMask[i] = okDec
+
+        i -= 1
+
+    for i in range(4):
+        resultMask += str(listMinMask[i])
+        if i != 3:
+            resultMask += "."
+
+    return "Минимальная маска: " + resultMask
 
 
